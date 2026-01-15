@@ -4,267 +4,263 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Dynasty 8 – Comptabilité</title>
+
 <style>
-  body {
-    background: linear-gradient(135deg, #0b0b0b, #1f1f1f);
-    color: #eee;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0; padding: 30px;
-  }
-  .container {
-    max-width: 960px;
-    margin: auto;
-    background: #121212;
-    border-radius: 15px;
-    box-shadow: 0 0 40px #c62828aa;
-    padding: 25px 30px;
-  }
-  h1 {
-    text-align: center;
-    color: #c62828;
-    margin-bottom: 25px;
-    font-weight: 900;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #222;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  thead {
-    background: #c62828;
-    color: white;
-  }
-  th, td {
-    padding: 10px 12px;
-    border-bottom: 1px solid #444;
-    text-align: center;
-  }
-  input[type=text], input[type=number], select {
-    width: 95%;
-    padding: 6px 8px;
-    border-radius: 6px;
-    border: none;
-    background: #2e2e2e;
-    color: white;
-    font-size: 14px;
-  }
-  input[type=file] {
-    color: white;
-  }
-  button {
-    background: #c62828;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    padding: 12px 18px;
-    font-size: 16px;
-    font-weight: bold;
-    margin-top: 20px;
-    width: 100%;
-    transition: background-color 0.3s ease;
-  }
-  button:hover {
-    background: #a22121;
-  }
-  .btn-delete {
-    background: darkred;
-    padding: 6px 12px;
-    font-weight: bold;
-    font-size: 14px;
-  }
-  .preview-img {
-    max-width: 80px;
-    max-height: 50px;
-    border-radius: 6px;
-    object-fit: cover;
-    border: 1.5px solid #c62828;
-  }
-  #totals {
-    margin-top: 15px;
-    font-size: 18px;
-    font-weight: 600;
-  }
-  @media (max-width: 650px) {
-    th, td {
-      font-size: 12px;
-      padding: 6px 4px;
-    }
-    input[type=text], input[type=number], select {
-      font-size: 12px;
-    }
-  }
+body {
+  background: linear-gradient(135deg, #0b0b0b, #1f1f1f);
+  color: #eee;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 30px;
+}
+
+.container {
+  max-width: 1000px;
+  margin: auto;
+  background: #121212;
+  border-radius: 15px;
+  box-shadow: 0 0 40px #c62828aa;
+  padding: 25px 30px;
+}
+
+h1 {
+  text-align: center;
+  color: #c62828;
+  margin-bottom: 25px;
+  font-weight: 900;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #222;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+thead {
+  background: #c62828;
+  color: white;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #444;
+  text-align: center;
+}
+
+input, select {
+  width: 95%;
+  padding: 6px;
+  border-radius: 6px;
+  border: none;
+  background: #2e2e2e;
+  color: white;
+}
+
+input[type=file] {
+  background: none;
+}
+
+button {
+  background: #c62828;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 15px;
+  width: 100%;
+}
+
+button:hover {
+  background: #a22121;
+}
+
+.btn-delete {
+  background: darkred;
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+.preview-img {
+  max-width: 80px;
+  max-height: 50px;
+  margin-top: 5px;
+  border-radius: 6px;
+  border: 1px solid #c62828;
+}
+
+#totals {
+  margin-top: 15px;
+  font-size: 18px;
+  font-weight: bold;
+}
 </style>
 </head>
+
 <body>
 
 <div class="container">
-  <h1>🏢 Dynasty 8 – Registre des ventes</h1>
+<h1>🏢 Dynasty 8 – Registre des ventes</h1>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Nom</th>
-        <th>Poste</th>
-        <th>Montant ($)</th>
-        <th>Preuve d’achat (screen)</th>
-        <th>Supprimer</th>
-      </tr>
-    </thead>
-    <tbody id="table-body">
-      <!-- Lignes dynamiques -->
-    </tbody>
-  </table>
+<table>
+<thead>
+<tr>
+  <th>Nom</th>
+  <th>Poste</th>
+  <th>Type</th>
+  <th>Montant ($)</th>
+  <th>Jours</th>
+  <th>Preuve</th>
+  <th>Supprimer</th>
+</tr>
+</thead>
+<tbody id="table-body"></tbody>
+</table>
 
-  <button onclick="ajouterLigne()">+ Ajouter une vente</button>
-  <button style="margin-top:10px;" onclick="envoyerTout()">📤 Envoyer tout à la compta Discord</button>
+<button onclick="ajouterLigne()">+ Ajouter une vente</button>
+<button onclick="envoyerTout()">📤 Envoyer à la compta Discord</button>
 
-  <p id="totals">Total des ventes : 0 $</p>
+<p id="totals">Total des ventes : 0 $</p>
 </div>
 
 <script>
-  const WEBHOOK_URL = "https://discord.com/api/webhooks/1461476549688688680/XOhZqQke8f4_x07k-OWYPGRndjkRTGV2jyJCGpnoLE8gMcGzbIMQZQRSEtbt4_hZUZf_";
+const WEBHOOK_URL = "https://discord.com/api/webhooks/1461476549688688680/XOhZqQke8f4_x07k-OWYPGRndjkRTGV2jyJCGpnoLE8gMcGzbIMQZQRSEtbt4_hZUZf_";
 
-  const POSTES = [
-    "PDG",
-    "Directeur",
-    "Agent Senior",
-    "Agent Immobilier",
-    "Stagiaire"
-  ];
+const POSTES = [
+  "PDG",
+  "Directeur",
+  "Agent Senior",
+  "Agent Immobilier",
+  "Stagiaire"
+];
 
-  function ajouterLigne() {
-    const tbody = document.getElementById('table-body');
-    const tr = document.createElement('tr');
+function ajouterLigne() {
+  const tbody = document.getElementById("table-body");
+  const tr = document.createElement("tr");
 
-    tr.innerHTML = `
-      <td><input type="text" placeholder="Nom RP" required></td>
-      <td>
-        <select>
-          ${POSTES.map(p => `<option>${p}</option>`).join('')}
-        </select>
-      </td>
-      <td><input type="number" min="0" value="0" oninput="calculerTotal()" required></td>
-      <td>
-        <input type="file" accept="image/*" onchange="previewImage(event)">
-        <br>
-        <img class="preview-img" style="display:none;" />
-      </td>
-      <td>
-        <button class="btn-delete" onclick="supprimerLigne(this)">X</button>
-      </td>
-    `;
+  tr.innerHTML = `
+    <td><input type="text" placeholder="Nom RP" required></td>
 
-    tbody.appendChild(tr);
-    calculerTotal();
+    <td>
+      <select>
+        ${POSTES.map(p => `<option>${p}</option>`).join("")}
+      </select>
+    </td>
+
+    <td>
+      <select class="type" onchange="toggleLocation(this)">
+        <option value="achat">Achat</option>
+        <option value="location">Location</option>
+      </select>
+    </td>
+
+    <td>
+      <input type="number" class="montant" min="0" value="0" oninput="calculerTotal()">
+    </td>
+
+    <td>
+      <input type="number" class="jours" min="1" value="1" style="display:none" oninput="calculerTotal()">
+    </td>
+
+    <td>
+      <input type="file" accept="image/*" onchange="previewImage(event)">
+      <br>
+      <img class="preview-img" style="display:none">
+    </td>
+
+    <td>
+      <button class="btn-delete" onclick="supprimerLigne(this)">X</button>
+    </td>
+  `;
+
+  tbody.appendChild(tr);
+  calculerTotal();
+}
+
+function toggleLocation(select) {
+  const tr = select.closest("tr");
+  const jours = tr.querySelector(".jours");
+
+  if (select.value === "location") {
+    jours.style.display = "block";
+  } else {
+    jours.style.display = "none";
+    jours.value = 1;
   }
+  calculerTotal();
+}
 
-  function supprimerLigne(btn) {
-    btn.closest('tr').remove();
-    calculerTotal();
-  }
+function supprimerLigne(btn) {
+  btn.closest("tr").remove();
+  calculerTotal();
+}
 
-  function previewImage(event) {
-    const input = event.target;
-    const file = input.files[0];
-    const img = input.nextElementSibling;
-    if (file) {
-      img.src = URL.createObjectURL(file);
-      img.style.display = 'inline-block';
-    } else {
-      img.src = '';
-      img.style.display = 'none';
-    }
-  }
+function previewImage(e) {
+  const img = e.target.nextElementSibling;
+  img.src = URL.createObjectURL(e.target.files[0]);
+  img.style.display = "block";
+}
 
-  function calculerTotal() {
-    const tbody = document.getElementById('table-body');
-    let total = 0;
-    tbody.querySelectorAll('tr').forEach(tr => {
-      const montantInput = tr.cells[2].querySelector('input');
-      const val = parseFloat(montantInput.value);
-      if (!isNaN(val)) total += val;
+function calculerTotal() {
+  let total = 0;
+  document.querySelectorAll("#table-body tr").forEach(tr => {
+    const type = tr.querySelector(".type").value;
+    const montant = parseFloat(tr.querySelector(".montant").value) || 0;
+    const jours = parseInt(tr.querySelector(".jours").value) || 1;
+
+    total += (type === "achat") ? montant : montant * jours;
+  });
+
+  document.getElementById("totals").innerText =
+    "Total des ventes : " + total.toLocaleString() + " $";
+}
+
+async function envoyerTout() {
+  const rows = document.querySelectorAll("#table-body tr");
+  if (!rows.length) return alert("Aucune vente");
+
+  const formData = new FormData();
+  let embeds = [];
+
+  rows.forEach((tr, i) => {
+    const nom = tr.cells[0].querySelector("input").value;
+    const poste = tr.cells[1].querySelector("select").value;
+    const type = tr.querySelector(".type").value;
+    const montant = tr.querySelector(".montant").value;
+    const jours = tr.querySelector(".jours").value;
+    const file = tr.querySelector("input[type=file]").files[0];
+
+    const filename = `preuve_${i}.png`;
+    formData.append(`files[${i}]`, file, filename);
+
+    embeds.push({
+      title: `📊 Vente #${i + 1}`,
+      color: 13369344,
+      fields: [
+        { name: "👤 Nom", value: nom, inline: true },
+        { name: "🏷️ Poste", value: poste, inline: true },
+        { name: "📦 Type", value: type === "achat" ? "Achat" : `Location (${jours} jours)`, inline: true },
+        { name: "💰 Total", value: type === "achat"
+            ? `${montant} $`
+            : `${montant * jours} $`, inline: true }
+      ],
+      image: { url: `attachment://${filename}` }
     });
-    document.getElementById('totals').innerText = 'Total des ventes : ' + total.toLocaleString() + ' $';
-  }
+  });
 
-  async function envoyerTout() {
-    const tbody = document.getElementById('table-body');
-    const lignes = Array.from(tbody.querySelectorAll('tr'));
+  formData.append("payload_json", JSON.stringify({ embeds }));
 
-    if (lignes.length === 0) {
-      alert("Ajoute au moins une vente avant d'envoyer.");
-      return;
-    }
+  await fetch(WEBHOOK_URL, { method: "POST", body: formData });
+  alert("✅ Envoyé !");
+  document.getElementById("table-body").innerHTML = "";
+  ajouterLigne();
+}
 
-    // Préparer formulaire pour webhook
-    const formData = new FormData();
-
-    // Construire les embeds Discord
-    let embeds = [];
-
-    // Images à joindre (attachments)
-    let attachments = [];
-
-    for (let i = 0; i < lignes.length; i++) {
-      const tr = lignes[i];
-      const nom = tr.cells[0].querySelector('input').value.trim();
-      const poste = tr.cells[1].querySelector('select').value;
-      const montant = tr.cells[2].querySelector('input').value.trim();
-      const fileInput = tr.cells[3].querySelector('input[type=file]');
-      const file = fileInput.files[0];
-
-      if (!nom || !montant || !file) {
-        alert(`Merci de remplir tous les champs et joindre une image à la ligne ${i + 1}`);
-        return;
-      }
-
-      // Ajouter le fichier avec nom unique
-      const filename = `image_${i}.png`;
-      formData.append(`files[${i}]`, file, filename);
-
-      // Ajouter l'embed correspondant
-      embeds.push({
-        title: `📊 Vente #${i + 1}`,
-        color: 13369344,
-        fields: [
-          { name: "👤 Agent", value: nom, inline: true },
-          { name: "🏷️ Poste", value: poste, inline: true },
-          { name: "💰 Montant", value: `${montant} $`, inline: true }
-        ],
-        image: { url: `attachment://${filename}` },
-        footer: { text: "Dynasty 8 – Comptabilité" },
-        timestamp: new Date()
-      });
-    }
-
-    formData.append('payload_json', JSON.stringify({ embeds }));
-
-    try {
-      const res = await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        body: formData
-      });
-
-      if (res.ok) {
-        alert("✅ Toutes les ventes ont été envoyées !");
-        // Reset tableau
-        tbody.innerHTML = '';
-        calculerTotal();
-      } else {
-        alert("Erreur lors de l'envoi à Discord. Code: " + res.status);
-      }
-    } catch (e) {
-      alert("Erreur réseau : " + e.message);
-    }
-  }
-
-  // Ajout d'une ligne par défaut au chargement
-  window.onload = () => {
-    ajouterLigne();
-  };
+window.onload = ajouterLigne;
 </script>
 
 </body>
