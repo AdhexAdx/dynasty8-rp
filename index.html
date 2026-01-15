@@ -1,276 +1,271 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Dynasty 8 – Comptabilité</title>
-
 <style>
-body {
-  background:#111;
-  color:#eee;
-  font-family:Segoe UI, sans-serif;
-  padding:30px;
-}
-
-.container {
-  max-width:1100px;
-  margin:auto;
-  background:#1a1a1a;
-  padding:25px;
-  border-radius:15px;
-  box-shadow:0 0 30px #c62828;
-}
-
-h1 {
-  text-align:center;
-  color:#c62828;
-}
-
-table {
-  width:100%;
-  border-collapse:collapse;
-  margin-top:20px;
-}
-
-thead {
-  background:#c62828;
-}
-
-th, td {
-  padding:10px;
-  text-align:center;
-  border-bottom:1px solid #333;
-}
-
-input, select {
-  width:95%;
-  padding:6px;
-  background:#2a2a2a;
-  color:white;
-  border:none;
-  border-radius:6px;
-}
-
-input[type=checkbox] {
-  width:auto;
-  transform:scale(1.3);
-}
-
-input[type=file] {
-  background:none;
-}
-
-button {
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  background:#c62828;
-  color:white;
-  border:none;
-  border-radius:10px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-button:hover {
-  background:#a22121;
-}
-
-.btn-delete {
-  background:darkred;
-  padding:6px 12px;
-}
-
-.preview {
-  max-width:80px;
-  display:none;
-  margin-top:5px;
-  border-radius:6px;
-}
-
-#total {
-  margin-top:15px;
-  font-size:18px;
-}
+  body {
+    background: linear-gradient(135deg, #0b0b0b, #1f1f1f);
+    color: #eee;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0; padding: 30px;
+  }
+  .container {
+    max-width: 960px;
+    margin: auto;
+    background: #121212;
+    border-radius: 15px;
+    box-shadow: 0 0 40px #c62828aa;
+    padding: 25px 30px;
+  }
+  h1 {
+    text-align: center;
+    color: #c62828;
+    margin-bottom: 25px;
+    font-weight: 900;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #222;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  thead {
+    background: #c62828;
+    color: white;
+  }
+  th, td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #444;
+    text-align: center;
+  }
+  input[type=text], input[type=number], select {
+    width: 95%;
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: none;
+    background: #2e2e2e;
+    color: white;
+    font-size: 14px;
+  }
+  input[type=file] {
+    color: white;
+  }
+  button {
+    background: #c62828;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 12px 18px;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 20px;
+    width: 100%;
+    transition: background-color 0.3s ease;
+  }
+  button:hover {
+    background: #a22121;
+  }
+  .btn-delete {
+    background: darkred;
+    padding: 6px 12px;
+    font-weight: bold;
+    font-size: 14px;
+  }
+  .preview-img {
+    max-width: 80px;
+    max-height: 50px;
+    border-radius: 6px;
+    object-fit: cover;
+    border: 1.5px solid #c62828;
+  }
+  #totals {
+    margin-top: 15px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  @media (max-width: 650px) {
+    th, td {
+      font-size: 12px;
+      padding: 6px 4px;
+    }
+    input[type=text], input[type=number], select {
+      font-size: 12px;
+    }
+  }
 </style>
 </head>
-
 <body>
 
 <div class="container">
-<h1>🏢 Dynasty 8 – Registre des ventes</h1>
+  <h1>🏢 Dynasty 8 – Registre des ventes</h1>
 
-<table>
-<thead>
-<tr>
-  <th>Nom</th>
-  <th>Poste</th>
-  <th>Location ?</th>
-  <th>Montant ($)</th>
-  <th>Jours</th>
-  <th>Preuve</th>
-  <th>Suppr.</th>
-</tr>
-</thead>
-<tbody id="body"></tbody>
-</table>
+  <table>
+    <thead>
+      <tr>
+        <th>Nom</th>
+        <th>Poste</th>
+        <th>Montant ($)</th>
+        <th>Preuve d’achat (screen)</th>
+        <th>Supprimer</th>
+      </tr>
+    </thead>
+    <tbody id="table-body">
+      <!-- Lignes dynamiques -->
+    </tbody>
+  </table>
 
-<button onclick="addRow()">➕ Ajouter une vente</button>
-<button onclick="sendDiscord()">📤 Envoyer à Discord</button>
-<button onclick="exportCSV()">📊 Export Excel</button>
+  <button onclick="ajouterLigne()">+ Ajouter une vente</button>
+  <button style="margin-top:10px;" onclick="envoyerTout()">📤 Envoyer tout à la compta Discord</button>
 
-<div id="total">Total : 0 $</div>
+  <p id="totals">Total des ventes : 0 $</p>
 </div>
 
 <script>
-const WEBHOOK_URL = "https://discord.com/api/webhooks/1461476549688688680/XOhZqQke8f4_x07k-OWYPGRndjkRTGV2jyJCGpnoLE8gMcGzbIMQZQRSEtbt4_hZUZf_";
+  const WEBHOOK_URL = "https://discord.com/api/webhooks/1461476549688688680/XOhZqQke8f4_x07k-OWYPGRndjkRTGV2jyJCGpnoLE8gMcGzbIMQZQRSEtbt4_hZUZf_";
 
-const POSTES = ["PDG","Directeur","Agent Senior","Agent Immobilier","Stagiaire"];
+  const POSTES = [
+    "PDG",
+    "Directeur",
+    "Agent Senior",
+    "Agent Immobilier",
+    "Stagiaire"
+  ];
 
-function addRow() {
-  const tr = document.createElement("tr");
+  function ajouterLigne() {
+    const tbody = document.getElementById('table-body');
+    const tr = document.createElement('tr');
 
-  tr.innerHTML = `
-    <td><input placeholder="Nom RP"></td>
+    tr.innerHTML = `
+      <td><input type="text" placeholder="Nom RP" required></td>
+      <td>
+        <select>
+          ${POSTES.map(p => `<option>${p}</option>`).join('')}
+        </select>
+      </td>
+      <td><input type="number" min="0" value="0" oninput="calculerTotal()" required></td>
+      <td>
+        <input type="file" accept="image/*" onchange="previewImage(event)">
+        <br>
+        <img class="preview-img" style="display:none;" />
+      </td>
+      <td>
+        <button class="btn-delete" onclick="supprimerLigne(this)">X</button>
+      </td>
+    `;
 
-    <td>
-      <select>
-        ${POSTES.map(p => `<option>${p}</option>`).join("")}
-      </select>
-    </td>
-
-    <td>
-      <input type="checkbox" onchange="toggleLocation(this)">
-    </td>
-
-    <td>
-      <input type="number" min="0" value="0" oninput="calcTotal()">
-    </td>
-
-    <td>
-      <input type="number" min="1" value="1" style="display:none" oninput="calcTotal()">
-    </td>
-
-    <td>
-      <input type="file" accept="image/*" onchange="previewImg(this)">
-      <img class="preview">
-    </td>
-
-    <td>
-      <button class="btn-delete" onclick="this.closest('tr').remove(); calcTotal()">X</button>
-    </td>
-  `;
-
-  document.getElementById("body").appendChild(tr);
-}
-
-function toggleLocation(cb) {
-  const tr = cb.closest("tr");
-  const jours = tr.cells[4].querySelector("input");
-
-  if (cb.checked) {
-    jours.style.display = "block";
-  } else {
-    jours.style.display = "none";
-    jours.value = 1;
+    tbody.appendChild(tr);
+    calculerTotal();
   }
-  calcTotal();
-}
 
-function previewImg(input) {
-  const img = input.nextElementSibling;
-  if (input.files[0]) {
-    img.src = URL.createObjectURL(input.files[0]);
-    img.style.display = "block";
-  } else {
-    img.style.display = "none";
+  function supprimerLigne(btn) {
+    btn.closest('tr').remove();
+    calculerTotal();
   }
-}
 
-function calcTotal() {
-  let total = 0;
-  document.querySelectorAll("#body tr").forEach(tr => {
-    const montant = parseFloat(tr.cells[3].querySelector("input").value) || 0;
-    const isLoc = tr.cells[2].querySelector("input").checked;
-    const jours = parseInt(tr.cells[4].querySelector("input").value) || 1;
-    total += isLoc ? montant * jours : montant;
-  });
-  document.getElementById("total").innerText =
-    "Total : " + total.toLocaleString() + " $";
-}
+  function previewImage(event) {
+    const input = event.target;
+    const file = input.files[0];
+    const img = input.nextElementSibling;
+    if (file) {
+      img.src = URL.createObjectURL(file);
+      img.style.display = 'inline-block';
+    } else {
+      img.src = '';
+      img.style.display = 'none';
+    }
+  }
 
-/* ========= EXPORT CSV ========= */
-function exportCSV() {
-  let csv = "Nom;Poste;Type;Montant;Jours;Total\n";
+  function calculerTotal() {
+    const tbody = document.getElementById('table-body');
+    let total = 0;
+    tbody.querySelectorAll('tr').forEach(tr => {
+      const montantInput = tr.cells[2].querySelector('input');
+      const val = parseFloat(montantInput.value);
+      if (!isNaN(val)) total += val;
+    });
+    document.getElementById('totals').innerText = 'Total des ventes : ' + total.toLocaleString() + ' $';
+  }
 
-  document.querySelectorAll("#body tr").forEach(tr => {
-    const nom = tr.cells[0].querySelector("input").value;
-    const poste = tr.cells[1].querySelector("select").value;
-    const isLoc = tr.cells[2].querySelector("input").checked;
-    const montant = tr.cells[3].querySelector("input").value;
-    const jours = tr.cells[4].querySelector("input").value || 1;
-    const total = isLoc ? montant * jours : montant;
+  async function envoyerTout() {
+    const tbody = document.getElementById('table-body');
+    const lignes = Array.from(tbody.querySelectorAll('tr'));
 
-    csv += `${nom};${poste};${isLoc?"Location":"Achat"};${montant};${jours};${total}\n`;
-  });
-
-  const blob = new Blob([csv], {type:"text/csv"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "dynasty8_ventes.csv";
-  a.click();
-}
-
-/* ========= DISCORD ========= */
-async function sendDiscord() {
-  const rows = document.querySelectorAll("#body tr");
-  if (rows.length === 0) return alert("Aucune vente");
-
-  const formData = new FormData();
-  const embeds = [];
-
-  rows.forEach((tr, i) => {
-    const nom = tr.cells[0].querySelector("input").value;
-    const poste = tr.cells[1].querySelector("select").value;
-    const isLoc = tr.cells[2].querySelector("input").checked;
-    const montant = tr.cells[3].querySelector("input").value;
-    const jours = tr.cells[4].querySelector("input").value;
-    const file = tr.cells[5].querySelector("input").files[0];
-
-    if (!nom || !file) {
-      alert("Nom ou image manquante");
-      throw new Error("Champs manquants");
+    if (lignes.length === 0) {
+      alert("Ajoute au moins une vente avant d'envoyer.");
+      return;
     }
 
-    const filename = `preuve_${i}.png`;
-    formData.append(`files[${i}]`, file, filename);
+    // Préparer formulaire pour webhook
+    const formData = new FormData();
 
-    embeds.push({
-      title: `Vente #${i+1}`,
-      color: 13369344,
-      fields: [
-        { name:"Agent", value:nom, inline:true },
-        { name:"Poste", value:poste, inline:true },
-        { name:"Type", value:isLoc?`Location (${jours} jours)`:"Achat", inline:true },
-        { name:"Total", value:isLoc?`${montant*jours} $`:`${montant} $`, inline:true }
-      ],
-      image:{ url:`attachment://${filename}` }
-    });
-  });
+    // Construire les embeds Discord
+    let embeds = [];
 
-  formData.append("payload_json", JSON.stringify({embeds}));
+    // Images à joindre (attachments)
+    let attachments = [];
 
-  await fetch(WEBHOOK_URL, { method:"POST", body:formData });
+    for (let i = 0; i < lignes.length; i++) {
+      const tr = lignes[i];
+      const nom = tr.cells[0].querySelector('input').value.trim();
+      const poste = tr.cells[1].querySelector('select').value;
+      const montant = tr.cells[2].querySelector('input').value.trim();
+      const fileInput = tr.cells[3].querySelector('input[type=file]');
+      const file = fileInput.files[0];
 
-  alert("✅ Envoyé sur Discord");
-  document.getElementById("body").innerHTML = "";
-  calcTotal();
-}
+      if (!nom || !montant || !file) {
+        alert(`Merci de remplir tous les champs et joindre une image à la ligne ${i + 1}`);
+        return;
+      }
 
-addRow();
+      // Ajouter le fichier avec nom unique
+      const filename = `image_${i}.png`;
+      formData.append(`files[${i}]`, file, filename);
+
+      // Ajouter l'embed correspondant
+      embeds.push({
+        title: `📊 Vente #${i + 1}`,
+        color: 13369344,
+        fields: [
+          { name: "👤 Agent", value: nom, inline: true },
+          { name: "🏷️ Poste", value: poste, inline: true },
+          { name: "💰 Montant", value: `${montant} $`, inline: true }
+        ],
+        image: { url: `attachment://${filename}` },
+        footer: { text: "Dynasty 8 – Comptabilité" },
+        timestamp: new Date()
+      });
+    }
+
+    formData.append('payload_json', JSON.stringify({ embeds }));
+
+    try {
+      const res = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        body: formData
+      });
+
+      if (res.ok) {
+        alert("✅ Toutes les ventes ont été envoyées !");
+        // Reset tableau
+        tbody.innerHTML = '';
+        calculerTotal();
+      } else {
+        alert("Erreur lors de l'envoi à Discord. Code: " + res.status);
+      }
+    } catch (e) {
+      alert("Erreur réseau : " + e.message);
+    }
+  }
+
+  // Ajout d'une ligne par défaut au chargement
+  window.onload = () => {
+    ajouterLigne();
+  };
 </script>
 
 </body>
 </html>
-
