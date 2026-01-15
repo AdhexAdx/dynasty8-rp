@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dynasty 8 – Comptabilité</title>
+
+<style>
+body {
+  background: linear-gradient(135deg, #0b0b0b, #1f1f1f);
+  color: #eee;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 30px;
+}
+
+.container {
+  max-width: 1100px;
+  margin: auto;
+  background: #121212;
+  border-radius: 15px;
+  box-shadow: 0 0 40px #c62828aa;
+  padding: 25px 30px;
+}
+
+h1 {
+  text-align: center;
+  color: #c62828;
+  margin-bottom: 25px;
+  font-weight: 900;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #222;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+thead {
+  background: #c62828;
+  color: white;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #444;
+  text-align: center;
+}
+
+input, select {
+  width: 95%;
+  padding: 6px;
+  border-radius: 6px;
+  border: none;
+  background: #2e2e2e;
+  color: white;
+}
+
+input[type=file] {
+  background: none;
+}
+
+button {
+  background: #c62828;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 12px;
+  width: 100%;
+}
+
+button:hover {
+  background: #a22121;
+}
+
+.btn-delete {
+  background: darkred;
+  padding: 6px 12px;
+}
+
+.preview-img {
+  max-width: 80px;
+  max-height: 50px;
+  border-radius: 6px;
+  margin-top: 5px;
+  display: none;
+  border: 1.5px solid #c62828;
+}
+
+#totals {
+  margin-top: 15px;
+  font-size: 18px;
+  font-weight: 600;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>🏢 Dynasty 8 – Registre des ventes</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Nom</th>
+        <th>Poste</th>
+        <th>Type</th>
+        <th>Montant ($)</th>
+        <th>Jours</th>
+        <th>Preuve</th>
+        <th>Suppr.</th>
+      </tr>
+    </thead>
+    <tbody id="table-body"></tbody>
+  </table>
+
+  <button onclick="ajouterLigne()">➕ Ajouter une vente</button>
+  <button onclick="envoyerTout()">📤 Envoyer à Discord</button>
+  <button onclick="exportExcel()">📊 Export Excel</button>
+
+  <p id="totals">Total des ventes : 0 $</p>
+</div>
+
+<script>
+const WEBHOOK_URL = "TON_WEBHOOK_ICI";
+
+const POSTES = [
+  "PDG",
+  "Directeur",
+  "Agent Senior",
+  "Agent Immobilier",
+  "Stagiaire"
+];
+
+function ajouterLigne() {
+  const tr = document.createElement("tr");
+
+  tr.innerHTML = `
+    <td><input type="text" placeholder="Nom RP"></td>
+
+    <td>
+      <select>
+        ${POSTES.map(p => `<option>${p}</option>`).join("")}
+      </select>
+    </td>
+
+    <td>
+      <select onchange="toggleType(this)">
+        <option value="achat">Achat</option>
+        <option value="location">Location</option>
+      </select>
+    </td>
+
+    <td><input type="number" min="0" value="0" oninput="calculerTotal()"></td>
+
+    <td>
+      <input type="number" min="1" value="1" style="display:none" oninput="calculerTotal()">
+    </td>
+
+    <td>
+      <input type="file" accept="image/*" onchange="previewImage(this)">
+      <img class="preview-img">
+    </td>
+
+    <td>
+      <button class="btn-delete" onclick="this.closest('tr').remove(); calculerTotal()">X</button>
+    </td>
+  `;
+
+  document.getElementById("table-body").appendChild(tr);
+  calculerTotal();
+}
+
+function toggleType(select) {
+  const tr = select.closest("tr");
+  const jours = tr.cells[4].querySelector("input");
+
+  if (select.value === "location") {
+    jours.style.display = "inline-block";
+  } else {
+    jours.style.display = "none";
+    jours.value = 1;
+  }
+  calculerTotal();
+}
+
+function previewImage(input) {
+  const img = input.nextElementSibling;
+  if (input.files[0]) {
+    img.src = URL.createObjectURL(input.files[0]);
+    img.style.display = "block";
+  } else {
+    img.style.display = "none";
+  }
+}
+
+function calculerTotal() {
+  let total = 0;
+  document.querySelectorAll("#table-body tr").forEach(tr => {
+    const type = tr.cells[2].querySelector("select").value;
+    const montant = parseFloat(tr.cells[3].querySelector("input").value) || 0;
+    const jours = parseInt(tr.cells[4].querySelector("input").value) || 1;
+    total += type === "location" ? montant * jours : montant;
+  });
+  document.getElementById("totals").innerText =
+    "Total des ventes : " + total.toLocaleString() + " $";
+}
+
+/* ================== EXPORT EXCEL ================== */
+function exportExcel() {
+  let csv = "Nom;Poste;Type;Montant;Jours;Total\n";
+
+  document.querySelectorAll("#table-body tr").forEach(tr => {
+    const nom = tr.cells[0].querySelector("input").value;
+    const poste = tr.cells[1].querySelector("select").value;
+    const type = tr.cells[2].querySelector("select").value;
+    const montant = tr.cells[3].querySelector("input").value;
+    const jours = tr.cells[4].querySelector("input").value || 1;
+    const total = type === "location" ? montant * jours : montant;
+
+    csv += `${nom};${poste};${type};${montant};${jours};${total}\n`;
+  });
+
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "dynasty8_ventes.csv";
+  link.click();
+}
+
+/* ================== DISCORD ================== */
+async function envoyerTout() {
+  const rows = document.querySelectorAll("#table-body tr");
+  if (rows.length === 0) return alert("Aucune vente");
+
+  const formData = new FormData();
+  const embeds = [];
+
+  rows.forEach((tr, i) => {
+    const nom = tr.cells[0].querySelector("input").value;
+    const poste = tr.cells[1].querySelector("select").value;
+    const type = tr.cells[2].querySelector("select").value;
+    const montant = tr.cells[3].querySelector("input").value;
+    const jours = tr.cells[4].querySelector("input").value;
+    const file = tr.cells[5].querySelector("input").files[0];
+
+    if (!nom || !file) return;
+
+    const filename = `preuve_${i}.png`;
+    formData.append(`files[${i}]`, file, filename);
+
+    embeds.push({
+      title: `Vente #${i + 1}`,
+      color: 13369344,
+      fields: [
+        { name: "Agent", value: nom, inline: true },
+        { name: "Poste", value: poste, inline: true },
+        {
+          name: "Type",
+          value: type === "achat" ? "Achat" : `Location (${jours} jours)`,
+          inline: true
+        },
+        {
+          name: "Total",
+          value: type === "location"
+            ? `${montant * jours} $`
+            : `${montant} $`,
+          inline: true
+        }
+      ],
+      image: { url: `attachment://${filename}` }
+    });
+  });
+
+  formData.append("payload_json", JSON.stringify({ embeds }));
+
+  await fetch(WEBHOOK_URL, { method: "POST", body: formData });
+  alert("✅ Envoyé !");
+  document.getElementById("table-body").innerHTML = "";
+  calculerTotal();
+}
+
+window.onload = ajouterLigne;
+</script>
+
+</body>
+</html>
